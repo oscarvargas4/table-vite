@@ -1,16 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
+import { UsersList } from './components/UsersList';
+import { User } from './components/User.interface';
+import { ButtonOptions } from './components/ButtonOptions';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    fetch('https://randomuser.me/api/?results=100')
+    .then(async res => res.json())    
+    .then(res => {
+      setUsers(res.results);
+    })
+    .catch( e => console.log(e));
+  },[]);
 
   return (
-    <>
-      Hola
-    </>
+    <div className='App'>
+      <h1>Table with candidates</h1>
+      <ButtonOptions />
+      <UsersList users={users} />
+    </div>
   )
 }
 
-export default App
+export default App;

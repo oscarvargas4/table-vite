@@ -6,6 +6,7 @@ import { ButtonOptions } from './components/ButtonOptions';
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
+  const [paintedRows, setPaintedRows] = useState<boolean>(false);
 
   useEffect(() => {
     fetch('https://randomuser.me/api/?results=100')
@@ -17,12 +18,13 @@ function App() {
   },[]);
 
   return (
-    <div className='App'>
+    <div className='App' style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <h1>Table with candidates</h1>
-      <ButtonOptions />
-      <UsersList users={users} />
+      <ButtonOptions paintedRows={paintedRows} setPaintedRows={setPaintedRows}/>
+      <UsersList users={users} paintedRows={paintedRows}/>
     </div>
   )
 }
 
 export default App;
+

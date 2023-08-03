@@ -1,12 +1,16 @@
 import { User } from "./User.interface"
+import "./ButtonOptions.css"
 
 type UserListProps = {
-    users: User[]
+    users: User[],
+    paintedRows: boolean,
 }
 
 
 export const UsersList = (props: UserListProps) => {
     const users = props.users;
+    const paintedRowsEnabled = props.paintedRows ? 'coloured' : 'transparent';
+
     return (
         <table style={{ width: '100%' }}>
             <thead>
@@ -18,10 +22,10 @@ export const UsersList = (props: UserListProps) => {
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody className={paintedRowsEnabled}>
                 {users.map(u => {
                     return (
-                        <tr key={u.id.value}>
+                        <tr key={u.login.uuid}>
                             <td><img src={u.picture.thumbnail} alt="" /></td>
                             <td>{u.name.first}</td>
                             <td>{u.name.last}</td>

@@ -1,0 +1,12 @@
+
+.coloured tr:nth-child(odd) {
+    background-color: #888;
+}
+
+.coloured tr:nth-child(even) {
+    background-color: transparent;
+}
+
+.transparent {
+    background: transparent;
+} 

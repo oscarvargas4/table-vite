@@ -15,7 +15,7 @@ export const UsersList = (props: UserListProps) => {
 
     const deleteUser = (id: string) => {
         setUsers(users.filter(u => u.login.uuid !== id));
-    }
+    };
 
     return (
         <table style={{ width: '100%' }}>

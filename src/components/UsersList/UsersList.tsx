@@ -1,15 +1,21 @@
 import { User } from "./User.interface"
-import "./ButtonOptions.css"
+import "../ButtonOptions/ButtonOptions"
 
 type UserListProps = {
     users: User[],
     paintedRows: boolean,
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>,
 }
 
 
 export const UsersList = (props: UserListProps) => {
     const users = props.users;
     const paintedRowsEnabled = props.paintedRows ? 'coloured' : 'transparent';
+    const setUsers = props.setUsers;
+
+    const deleteUser = (id: string) => {
+        setUsers(users.filter(u => u.login.uuid !== id));
+    }
 
     return (
         <table style={{ width: '100%' }}>
@@ -30,7 +36,7 @@ export const UsersList = (props: UserListProps) => {
                             <td>{u.name.first}</td>
                             <td>{u.name.last}</td>
                             <td>{u.location.country}</td>
-                            <td><button>Borrar</button></td>
+                            <td><button onClick={() => deleteUser(u.login.uuid)}>Borrar</button></td>
                         </tr>
                     )
                 })}

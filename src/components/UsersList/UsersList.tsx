@@ -1,5 +1,5 @@
 import { User } from "./User.interface"
-import "../ButtonOptions/ButtonOptions"
+import "../ButtonOptions/ButtonOptions.css"
 
 type UserListProps = {
     users: User[],

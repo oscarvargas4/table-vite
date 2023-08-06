@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useRef, useState, useMemo,
+} from 'react';
 import './App.css';
 import UsersList from './components/UsersList/UsersList.tsx';
-import { User } from './components/UsersList/User.interface.tsx';
+import { User, SortBy } from './components/UsersList/User.interface.ts';
 import ButtonOptions from './components/ButtonOptions/ButtonOptions.tsx';
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [paintedRows, setPaintedRows] = useState<boolean>(false);
-  const [sortByCountryEnabled, setSortByCountryEnabled] = useState<boolean>(false);
+  const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
   const [filterByCountry, setFilterByCountry] = useState<string>('');
   const initialValues = useRef<User[]>([]);
 
@@ -25,18 +27,49 @@ function App() {
     setUsers(initialValues.current);
   };
 
-  const usersFilteredByCountry = filterByCountry
-    ? users
-      .filter((u) => u.location.country.toLocaleLowerCase().includes(filterByCountry.toLocaleLowerCase()))
-    : users;
+  const toggleSortByCountry = () => {
+    const newSortingValue = sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE;
+    setSorting(newSortingValue);
+  };
 
-  const sortedUsers = sortByCountryEnabled
-    ? [...usersFilteredByCountry].sort((a, b) => {
-      const userA = a.location.country;
-      const userB = b.location.country;
-      return userA.localeCompare(userB);
-    })
-    : usersFilteredByCountry;
+  const handleChangeSort = (sort: SortBy) => {
+    console.log(sort);
+    setSorting(sort);
+  };
+
+  const filteredUsers = useMemo(() => {
+    console.log('filtered');
+
+    return filterByCountry
+      ? users
+        .filter((u) => u.location.country.toLocaleLowerCase().includes(filterByCountry.toLocaleLowerCase()))
+      : users;
+  }, [users, filterByCountry]);
+
+  const sortedUsers = useMemo(() => {
+    if (sorting === SortBy.NAME) {
+      return [...filteredUsers].sort((a, b) => {
+        const userA = a.name.first;
+        const userB = b.name.first;
+        return userA.localeCompare(userB);
+      });
+    }
+    if (sorting === SortBy.LAST) {
+      return [...filteredUsers].sort((a, b) => {
+        const userA = a.name.last;
+        const userB = b.name.last;
+        return userA.localeCompare(userB);
+      });
+    }
+    if (sorting === SortBy.COUNTRY) {
+      return [...filteredUsers].sort((a, b) => {
+        const userA = a.location.country;
+        const userB = b.location.country;
+        return userA.localeCompare(userB);
+      });
+    }
+    return filteredUsers;
+  }, [filteredUsers, sorting]);
 
   return (
     <div className="App" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -45,11 +78,11 @@ function App() {
         paintedRows={paintedRows}
         setPaintedRows={setPaintedRows}
         restoreUsers={restoreUsers}
-        sortByCountryEnabled={sortByCountryEnabled}
-        setSortByCountryEnabled={setSortByCountryEnabled}
+        sorting={sorting}
+        toggleSortByCountry={toggleSortByCountry}
         setFilterByCountry={setFilterByCountry}
       />
-      <UsersList users={sortedUsers} setUsers={setUsers} paintedRows={paintedRows} />
+      <UsersList users={sortedUsers} setUsers={setUsers} paintedRows={paintedRows} changeSorting={handleChangeSort} />
     </div>
   );
 }

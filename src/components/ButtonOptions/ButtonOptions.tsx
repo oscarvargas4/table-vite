@@ -1,9 +1,11 @@
+import { SortBy } from '../UsersList/User.interface.ts';
+
 type ButtonOptionsProps = {
   paintedRows: boolean,
   setPaintedRows: React.Dispatch<React.SetStateAction<boolean>>,
   restoreUsers: () => void,
-  sortByCountryEnabled: boolean,
-  setSortByCountryEnabled: React.Dispatch<React.SetStateAction<boolean>>,
+  sorting: SortBy,
+  toggleSortByCountry: () => void,
   setFilterByCountry: React.Dispatch<React.SetStateAction<string>>,
 };
 
@@ -12,8 +14,8 @@ export default function ButtonOptions(props: ButtonOptionsProps) {
     paintedRows,
     setPaintedRows,
     restoreUsers,
-    sortByCountryEnabled,
-    setSortByCountryEnabled,
+    sorting,
+    toggleSortByCountry,
     setFilterByCountry,
   } = props;
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,9 +27,9 @@ export default function ButtonOptions(props: ButtonOptionsProps) {
       display: 'flex', flexDirection: 'row', gap: '15px', justifyContent: 'center', alignContent: 'center',
     }}
     >
-      <button type="button" onClick={() => setPaintedRows(!paintedRows)}>Paint Rows</button>
-      <button type="button" onClick={() => setSortByCountryEnabled((prevState) => !prevState)}>
-        {sortByCountryEnabled ? 'Do not Sort By Country' : 'Sort By Country'}
+      <button type="button" onClick={() => setPaintedRows(!paintedRows)}>{paintedRows ? 'Unpaint Rows' : 'Paint Rows'}</button>
+      <button type="button" onClick={toggleSortByCountry}>
+        {sorting === SortBy.COUNTRY ? 'Do not Sort By Country' : 'Sort By Country'}
       </button>
       <button type="button" onClick={() => restoreUsers()}>Resotre Initial State</button>
       <input type="text" placeholder="Filter By Country" onChange={inputHandler} />

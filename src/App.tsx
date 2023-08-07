@@ -33,18 +33,13 @@ function App() {
   };
 
   const handleChangeSort = (sort: SortBy) => {
-    console.log(sort);
     setSorting(sort);
   };
 
-  const filteredUsers = useMemo(() => {
-    console.log('filtered');
-
-    return filterByCountry
-      ? users
-        .filter((u) => u.location.country.toLocaleLowerCase().includes(filterByCountry.toLocaleLowerCase()))
-      : users;
-  }, [users, filterByCountry]);
+  const filteredUsers = useMemo(() => (filterByCountry
+    ? users
+      .filter((u) => u.location.country.toLocaleLowerCase().includes(filterByCountry.toLocaleLowerCase()))
+    : users), [users, filterByCountry]);
 
   const sortedUsers = useMemo(() => {
     if (sorting === SortBy.NONE) return filteredUsers;
@@ -55,7 +50,7 @@ function App() {
       [SortBy.COUNTRY]: user => user.location.country,
     };
 
-    return [...filteredUsers].sort((a, b) => {
+    return filteredUsers.toSorted((a, b) => {
       const extractProperty = compareProperties[sorting];
       return extractProperty(a).localeCompare(extractProperty(b));
     });

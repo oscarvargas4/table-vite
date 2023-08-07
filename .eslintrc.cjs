@@ -27,5 +27,6 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'no-console': 0,
     'linebreak-style': 0,
+    'arrow-parens': 0,
   },
 };

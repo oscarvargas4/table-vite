@@ -47,28 +47,18 @@ function App() {
   }, [users, filterByCountry]);
 
   const sortedUsers = useMemo(() => {
-    if (sorting === SortBy.NAME) {
-      return [...filteredUsers].sort((a, b) => {
-        const userA = a.name.first;
-        const userB = b.name.first;
-        return userA.localeCompare(userB);
-      });
-    }
-    if (sorting === SortBy.LAST) {
-      return [...filteredUsers].sort((a, b) => {
-        const userA = a.name.last;
-        const userB = b.name.last;
-        return userA.localeCompare(userB);
-      });
-    }
-    if (sorting === SortBy.COUNTRY) {
-      return [...filteredUsers].sort((a, b) => {
-        const userA = a.location.country;
-        const userB = b.location.country;
-        return userA.localeCompare(userB);
-      });
-    }
-    return filteredUsers;
+    if (sorting === SortBy.NONE) return filteredUsers;
+
+    const compareProperties: Record<string, (user: User) => string> = {
+      [SortBy.NAME]: user => user.name.first,
+      [SortBy.LAST]: user => user.name.last,
+      [SortBy.COUNTRY]: user => user.location.country,
+    };
+
+    return [...filteredUsers].sort((a, b) => {
+      const extractProperty = compareProperties[sorting];
+      return extractProperty(a).localeCompare(extractProperty(b));
+    });
   }, [filteredUsers, sorting]);
 
   return (

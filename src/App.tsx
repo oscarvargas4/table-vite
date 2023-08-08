@@ -12,15 +12,28 @@ function App() {
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
   const [filterByCountry, setFilterByCountry] = useState<string>('');
   const initialValues = useRef<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('https://randomuser.me/api/?results=100')
-      .then(async (res) => res.json())
+    setLoading(true);
+    setError(null);
+    fetch('https://randomuser.me/api/?results=10')
+      .then((res) => {
+        if (!res.ok) throw new Error('Error trying to fetch Users');
+        return res.json();
+      })
       .then((res) => {
         setUsers(res.results);
         initialValues.current = res.results;
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        setError(e);
+        console.log(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const restoreUsers = () => {
@@ -58,16 +71,25 @@ function App() {
 
   return (
     <div className="App" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <h1>Table with candidates</h1>
-      <ButtonOptions
-        paintedRows={paintedRows}
-        setPaintedRows={setPaintedRows}
-        restoreUsers={restoreUsers}
-        sorting={sorting}
-        toggleSortByCountry={toggleSortByCountry}
-        setFilterByCountry={setFilterByCountry}
-      />
-      <UsersList users={sortedUsers} setUsers={setUsers} paintedRows={paintedRows} changeSorting={handleChangeSort} />
+      <header style={{
+        display: 'flex', flexDirection: 'column', gap: '15px', justifyContent: 'center', alignContent: 'center',
+      }}
+      >
+        <ButtonOptions
+          paintedRows={paintedRows}
+          setPaintedRows={setPaintedRows}
+          restoreUsers={restoreUsers}
+          sorting={sorting}
+          toggleSortByCountry={toggleSortByCountry}
+          setFilterByCountry={setFilterByCountry}
+        />
+      </header>
+      <main>
+        {loading && <p>Loading...</p>}
+        {!loading && error && <p>Cannot load users</p>}
+        {!loading && !error && users.length === 0 && <p>There are no Users</p>}
+        {!loading && !error && users.length > 0 && <UsersList users={sortedUsers} setUsers={setUsers} paintedRows={paintedRows} changeSorting={handleChangeSort} />}
+      </main>
     </div>
   );
 }
